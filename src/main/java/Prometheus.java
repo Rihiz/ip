@@ -34,6 +34,8 @@ public class Prometheus {
     private static void processCommand(String input) throws PrometheusException {
         if (input.equalsIgnoreCase("list")) {
             printTaskList();
+        } else if (input.startsWith("delete ")) {
+            deleteTask(input);
         } else if (input.startsWith("mark ")) {
             markTask(input);
         } else if (input.startsWith("unmark ")) {
@@ -146,6 +148,25 @@ public class Prometheus {
             }
         } catch (NumberFormatException e) {
             throw new PrometheusException("Please enter a valid task number after 'unmark'");
+        }
+    }
+
+    private static void deleteTask(String input) throws PrometheusException {
+        try {
+            int index = Integer.parseInt(input.substring(7).trim()) - 1;
+            if (index >= 0 && index < tasks.size()) {
+                Task removedTask = tasks.get(index);
+                tasks.remove(index);
+                System.out.println("____________________________________________________________");
+                System.out.println("Noted. I've removed this task:");
+                System.out.println("  " + removedTask);
+                System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+                System.out.println("____________________________________________________________");
+            } else {
+                throw new PrometheusException("Invalid task number! Please choose between 1 and " + tasks.size());
+            }
+        } catch (NumberFormatException e) {
+            throw new PrometheusException("Please enter a valid task number after 'delete'");
         }
     }
 
