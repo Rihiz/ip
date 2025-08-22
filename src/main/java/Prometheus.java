@@ -1,4 +1,3 @@
-// File: src/main/java/Aurora.java
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -17,20 +16,14 @@ public class Prometheus {
 
             if (input.equalsIgnoreCase("bye")) {
                 break;
-            } else if (input.equalsIgnoreCase("list")) {
-                printTaskList();
-            } else if (input.startsWith("mark ")) {
-                markTask(input);
-            } else if (input.startsWith("unmark ")) {
-                unmarkTask(input);
-            } else if (input.startsWith("todo ")) {
-                addTodo(input);
-            } else if (input.startsWith("deadline ")) {
-                addDeadline(input);
-            } else if (input.startsWith("event ")) {
-                addEvent(input);
             } else {
-                System.out.println("Unknown command! Use: todo, deadline, event, list, mark, unmark, bye");
+                try {
+                    processCommand(input);
+                } catch (PrometheusException e) {
+                    showError(e.getMessage());
+                } catch (Exception e) {
+                    showError("An unexpected error occurred: " + e.getMessage());
+                }
             }
         }
 
@@ -38,24 +31,57 @@ public class Prometheus {
         scanner.close();
     }
 
+    private static void processCommand(String input) throws PrometheusException {
+        if (input.equalsIgnoreCase("list")) {
+            printTaskList();
+        } else if (input.startsWith("mark ")) {
+            markTask(input);
+        } else if (input.startsWith("unmark ")) {
+            unmarkTask(input);
+        } else if (input.startsWith("todo")) {
+            addTodo(input);
+        } else if (input.startsWith("deadline")) {
+            addDeadline(input);
+        } else if (input.startsWith("event")) {
+            addEvent(input);
+        } else {
+            throw new PrometheusException("'" + input + "' is not a valid command!");
+        }
+    }
+
     private static void printTaskList() {
         System.out.println("____________________________________________________________");
-        System.out.println("Here are the tasks in your list:");
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + "." + tasks.get(i));
+        if (tasks.isEmpty()) {
+            System.out.println("Your task list is empty!");
+        } else {
+            System.out.println("Here are the tasks in your list:");
+            for (int i = 0; i < tasks.size(); i++) {
+                System.out.println(" " + (i + 1) + "." + tasks.get(i));
+            }
         }
         System.out.println("____________________________________________________________");
     }
 
-    private static void addTodo(String input) {
-        String description = input.substring(5).trim();
+    private static void addTodo(String input) throws PrometheusException {
+        if (input.length() <= 4 || input.substring(4).trim().isEmpty()) {
+            throw new PrometheusException("The description of a todo cannot be empty.");
+        }
+        String description = input.substring(4).trim();
         Todo todo = new Todo(description);
         tasks.add(todo);
         printAddConfirmation(todo);
     }
 
-    private static void addDeadline(String input) {
-        String[] parts = input.substring(9).split("/by");
+    private static void addDeadline(String input) throws PrometheusException {
+        if (input.length() <= 8 || !input.contains("/by")) {
+            throw new PrometheusException("Please use format: deadline <description> /by <time>");
+        }
+
+        String[] parts = input.substring(8).split("/by", 2);
+        if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
+            throw new PrometheusException("Please use format: deadline <description> /by <time>");
+        }
+
         String description = parts[0].trim();
         String by = parts[1].trim();
         Deadline deadline = new Deadline(description, by);
@@ -63,8 +89,16 @@ public class Prometheus {
         printAddConfirmation(deadline);
     }
 
-    private static void addEvent(String input) {
-        String[] parts = input.substring(6).split("/from|/to");
+    private static void addEvent(String input) throws PrometheusException {
+        if (input.length() <= 5 || !input.contains("/from") || !input.contains("/to")) {
+            throw new PrometheusException("Please use format: event <description> /from <start> /to <end>");
+        }
+
+        String[] parts = input.substring(5).split("/from|/to", 3);
+        if (parts.length < 3 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty() || parts[2].trim().isEmpty()) {
+            throw new PrometheusException("Please use format: event <description> /from <start> /to <end>");
+        }
+
         String description = parts[0].trim();
         String from = parts[1].trim();
         String to = parts[2].trim();
@@ -81,29 +115,43 @@ public class Prometheus {
         System.out.println("____________________________________________________________");
     }
 
-    private static void markTask(String input) {
-        int index = Integer.parseInt(input.substring(5).trim()) - 1;
-        if (index >= 0 && index < tasks.size()) {
-            tasks.get(index).markAsDone();
-            System.out.println("____________________________________________________________");
-            System.out.println("Nice! I've marked this task as done:");
-            System.out.println("  " + tasks.get(index));
-            System.out.println("____________________________________________________________");
-        } else {
-            System.out.println("Invalid task number!");
+    private static void markTask(String input) throws PrometheusException {
+        try {
+            int index = Integer.parseInt(input.substring(5).trim()) - 1;
+            if (index >= 0 && index < tasks.size()) {
+                tasks.get(index).markAsDone();
+                System.out.println("____________________________________________________________");
+                System.out.println("Nice! I've marked this task as done:");
+                System.out.println("  " + tasks.get(index));
+                System.out.println("____________________________________________________________");
+            } else {
+                throw new PrometheusException("Invalid task number! Please choose between 1 and " + tasks.size());
+            }
+        } catch (NumberFormatException e) {
+            throw new PrometheusException("Please enter a valid task number after 'mark'");
         }
     }
 
-    private static void unmarkTask(String input) {
-        int index = Integer.parseInt(input.substring(7).trim()) - 1;
-        if (index >= 0 && index < tasks.size()) {
-            tasks.get(index).markAsNotDone();
-            System.out.println("____________________________________________________________");
-            System.out.println("OK, I've marked this task as not done yet:");
-            System.out.println("  " + tasks.get(index));
-            System.out.println("____________________________________________________________");
-        } else {
-            System.out.println("Invalid task number!");
+    private static void unmarkTask(String input) throws PrometheusException {
+        try {
+            int index = Integer.parseInt(input.substring(7).trim()) - 1;
+            if (index >= 0 && index < tasks.size()) {
+                tasks.get(index).markAsNotDone();
+                System.out.println("____________________________________________________________");
+                System.out.println("OK, I've marked this task as not done yet:");
+                System.out.println("  " + tasks.get(index));
+                System.out.println("____________________________________________________________");
+            } else {
+                throw new PrometheusException("Invalid task number! Please choose between 1 and " + tasks.size());
+            }
+        } catch (NumberFormatException e) {
+            throw new PrometheusException("Please enter a valid task number after 'unmark'");
         }
+    }
+
+    private static void showError(String errorMessage) {
+        System.out.println("____________________________________________________________");
+        System.out.println("Error! " + errorMessage);
+        System.out.println("____________________________________________________________");
     }
 }
