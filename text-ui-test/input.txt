@@ -1,0 +1,5 @@
+todo read book
+event movie /from Mon 8pm /to 11pm
+deadline return book /by Sunday 2pm
+todo homework
+event project meeting /from Tues 2pm /to 4pm
