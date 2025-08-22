@@ -23,8 +23,14 @@ public class Prometheus {
                 markTask(input);
             } else if (input.startsWith("unmark ")) {
                 unmarkTask(input);
+            } else if (input.startsWith("todo ")) {
+                addTodo(input);
+            } else if (input.startsWith("deadline ")) {
+                addDeadline(input);
+            } else if (input.startsWith("event ")) {
+                addEvent(input);
             } else {
-                addTask(input);
+                System.out.println("Unknown command! Use: todo, deadline, event, list, mark, unmark, bye");
             }
         }
 
@@ -36,16 +42,42 @@ public class Prometheus {
         System.out.println("____________________________________________________________");
         System.out.println("Here are the tasks in your list:");
         for (int i = 0; i < tasks.size(); i++) {
-            System.out.println(" " + (i + 1) + "." + tasks.get(i));
+            System.out.println((i + 1) + "." + tasks.get(i));
         }
         System.out.println("____________________________________________________________");
     }
 
-    private static void addTask(String description) {
-        Task newTask = new Task(description);
-        tasks.add(newTask);
+    private static void addTodo(String input) {
+        String description = input.substring(5).trim();
+        Todo todo = new Todo(description);
+        tasks.add(todo);
+        printAddConfirmation(todo);
+    }
+
+    private static void addDeadline(String input) {
+        String[] parts = input.substring(9).split("/by");
+        String description = parts[0].trim();
+        String by = parts[1].trim();
+        Deadline deadline = new Deadline(description, by);
+        tasks.add(deadline);
+        printAddConfirmation(deadline);
+    }
+
+    private static void addEvent(String input) {
+        String[] parts = input.substring(6).split("/from|/to");
+        String description = parts[0].trim();
+        String from = parts[1].trim();
+        String to = parts[2].trim();
+        Event event = new Event(description, from, to);
+        tasks.add(event);
+        printAddConfirmation(event);
+    }
+
+    private static void printAddConfirmation(Task task) {
         System.out.println("____________________________________________________________");
-        System.out.println("Added: " + description);
+        System.out.println("Got it. I've added this task:");
+        System.out.println("  " + task);
+        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
         System.out.println("____________________________________________________________");
     }
 
