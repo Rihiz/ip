@@ -33,14 +33,9 @@ public class Prometheus {
      */
 
     public static void main(String[] args) {
-        try {
-            // Load tasks from file on startup
-            tasks = Storage.loadTasks();
-            System.out.println("Loaded " + tasks.size() + " tasks from storage");
-        } catch(PrometheusException e) {
-            System.out.println("Error loading tasks: " + e.getMessage());
-            tasks = new ArrayList<>();
-        }
+        // Load tasks from file on startup
+        tasks = Storage.loadTasks();
+        System.out.println("Loaded " + tasks.size() + " tasks from storage");
         System.out.println("Hello! I'm Prometheus");
         System.out.println("What can I do for you?");
         System.out.println("____________________________________________________________");
