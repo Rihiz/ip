@@ -33,6 +33,14 @@ public class Prometheus {
      */
 
     public static void main(String[] args) {
+        try {
+            // Load tasks from file on startup
+            tasks = Storage.loadTasks();
+            System.out.println("Loaded " + tasks.size() + " tasks from storage");
+        } catch(PrometheusException e) {
+            System.out.println("Error loading tasks: " + e.getMessage());
+            tasks = new ArrayList<>();
+        }
         System.out.println("Hello! I'm Prometheus");
         System.out.println("What can I do for you?");
         System.out.println("____________________________________________________________");
@@ -42,17 +50,27 @@ public class Prometheus {
             input = scanner.nextLine().trim();
             Command command = Command.parseCommand(input);
 
-            if (input.equalsIgnoreCase("bye")) {
+            if (command == Command.BYE) {
                 break;
             } else {
                 try {
                     processCommand(command, input);
+                    // Auto-save after every successful command
+                    Storage.saveTasks(tasks);
                 } catch (PrometheusException e) {
                     showError(e.getMessage());
                 } catch (Exception e) {
                     showError("An unexpected error occurred: " + e.getMessage());
                 }
             }
+        }
+
+        // Final save before exit
+        try {
+            Storage.saveTasks(tasks);
+            System.out.println("Tasks saved successfully.");
+        } catch (PrometheusException e) {
+            showError("Failed to save tasks: " + e.getMessage());
         }
 
         System.out.println("Bye. Hope to see you again soon!");
