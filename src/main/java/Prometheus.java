@@ -1,9 +1,36 @@
+/// The Prometheus class represents a simple command-line chatbot
+/// that manages a task list. Users can add, delete, mark, unmark,
+/// and list tasks via text commands. The chatbot runs in an
+/// interactive loop until the user types "bye".
+///
+/// Supported commands include:
+/// - list: Displays all tasks.
+/// - todo description: Adds a Todo task.
+/// - deadline <description> /by <time>: Adds a Deadline task.
+/// - event <description> /from <start> /to <end>: Adds an Event task.
+/// - mark <task number>: Marks a task as completed.
+/// - unmark <task number>: Marks a task as not completed.
+/// - delete <task number>: Deletes a task.
+/// - bye: Exits the chatbot.*
+///
+///  @Errors are reported back to the user with descriptive messages.
+///  * All task operations are wrapped in exception handling to ensure
+///  * predictable behavior.
+
 import java.util.Scanner;
 import java.util.ArrayList;
 
 public class Prometheus {
     private static ArrayList<Task> tasks = new ArrayList<>();
     private static Scanner scanner = new Scanner(System.in);
+
+    /**
+     * Entry point of the Prometheus chatbot.
+     * Starts the interactive command loop and processes user input
+     * until the "bye" command is entered.
+     *
+     * @param args Command-line arguments (not used).
+     */
 
     public static void main(String[] args) {
         System.out.println("Hello! I'm Prometheus");
@@ -13,12 +40,13 @@ public class Prometheus {
         String input;
         while (true) {
             input = scanner.nextLine().trim();
+            Command command = Command.parseCommand(input);
 
             if (input.equalsIgnoreCase("bye")) {
                 break;
             } else {
                 try {
-                    processCommand(input);
+                    processCommand(command, input);
                 } catch (PrometheusException e) {
                     showError(e.getMessage());
                 } catch (Exception e) {
@@ -31,23 +59,33 @@ public class Prometheus {
         scanner.close();
     }
 
-    private static void processCommand(String input) throws PrometheusException {
-        if (input.equalsIgnoreCase("list")) {
-            printTaskList();
-        } else if (input.startsWith("delete ")) {
-            deleteTask(input);
-        } else if (input.startsWith("mark ")) {
-            markTask(input);
-        } else if (input.startsWith("unmark ")) {
-            unmarkTask(input);
-        } else if (input.startsWith("todo")) {
-            addTodo(input);
-        } else if (input.startsWith("deadline")) {
-            addDeadline(input);
-        } else if (input.startsWith("event")) {
-            addEvent(input);
-        } else {
-            throw new PrometheusException("'" + input + "' is not a valid command!");
+    private static void processCommand(Command command, String input) throws PrometheusException {
+        switch (command) {
+            case LIST:
+                printTaskList();
+                break;
+            case MARK:
+                markTask(input);
+                break;
+            case UNMARK:
+                unmarkTask(input);
+                break;
+            case TODO:
+                addTodo(input);
+                break;
+            case DEADLINE:
+                addDeadline(input);
+                break;
+            case EVENT:
+                addEvent(input);
+                break;
+            case DELETE:
+                deleteTask(input);
+                break;
+            case UNKNOWN:
+                throw new PrometheusException("'" + input.split(" ")[0] + "' is not a valid command!");
+            default:
+                throw new PrometheusException("Unexpected command: " + command);
         }
     }
 
