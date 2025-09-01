@@ -1,3 +1,22 @@
+/// The Prometheus class represents a simple command-line chatbot
+/// that manages a task list. Users can add, delete, mark, unmark,
+/// and list tasks via text commands. The chatbot runs in an
+/// interactive loop until the user types "bye".
+///
+/// Supported commands include:
+/// - list: Displays all tasks.
+/// - todo description: Adds a Todo task.
+/// - deadline <description> /by <time>: Adds a Deadline task.
+/// - event <description> /from <start> /to <end>: Adds an Event task.
+/// - mark <task number>: Marks a task as completed.
+/// - unmark <task number>: Marks a task as not completed.
+/// - delete <task number>: Deletes a task.
+/// - bye: Exits the chatbot.*
+///
+///  @Errors are reported back to the user with descriptive messages.
+///  * All task operations are wrapped in exception handling to ensure
+///  * predictable behavior.
+
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -5,7 +24,23 @@ public class Prometheus {
     private static ArrayList<Task> tasks = new ArrayList<>();
     private static Scanner scanner = new Scanner(System.in);
 
+    /**
+     * Entry point of the Prometheus chatbot.
+     * Starts the interactive command loop and processes user input
+     * until the "bye" command is entered.
+     *
+     * @param args Command-line arguments (not used).
+     */
+
     public static void main(String[] args) {
+        try {
+            // Load tasks from file on startup
+            tasks = Storage.loadTasks();
+            System.out.println("Loaded " + tasks.size() + " tasks from storage");
+        } catch(PrometheusException e) {
+            System.out.println("Error loading tasks: " + e.getMessage());
+            tasks = new ArrayList<>();
+        }
         System.out.println("Hello! I'm Prometheus");
         System.out.println("What can I do for you?");
         System.out.println("____________________________________________________________");
@@ -13,12 +48,15 @@ public class Prometheus {
         String input;
         while (true) {
             input = scanner.nextLine().trim();
+            Command command = Command.parseCommand(input);
 
-            if (input.equalsIgnoreCase("bye")) {
+            if (command == Command.BYE) {
                 break;
             } else {
                 try {
-                    processCommand(input);
+                    processCommand(command, input);
+                    // Auto-save after every successful command
+                    Storage.saveTasks(tasks);
                 } catch (PrometheusException e) {
                     showError(e.getMessage());
                 } catch (Exception e) {
@@ -27,30 +65,59 @@ public class Prometheus {
             }
         }
 
+        // Final save before exit
+        try {
+            Storage.saveTasks(tasks);
+            System.out.println("Tasks saved successfully.");
+        } catch (PrometheusException e) {
+            showError("Failed to save tasks: " + e.getMessage());
+        }
+
         System.out.println("Bye. Hope to see you again soon!");
         scanner.close();
     }
 
-    private static void processCommand(String input) throws PrometheusException {
-        if (input.equalsIgnoreCase("list")) {
-            printTaskList();
-        } else if (input.startsWith("delete ")) {
-            deleteTask(input);
-        } else if (input.startsWith("mark ")) {
-            markTask(input);
-        } else if (input.startsWith("unmark ")) {
-            unmarkTask(input);
-        } else if (input.startsWith("todo")) {
-            addTodo(input);
-        } else if (input.startsWith("deadline")) {
-            addDeadline(input);
-        } else if (input.startsWith("event")) {
-            addEvent(input);
-        } else {
-            throw new PrometheusException("'" + input + "' is not a valid command!");
+    /**
+     * Processes a user command by delegating to the appropriate handler method.
+     *
+     * @param command The parsed {@link Command} enum representing the user command.
+     * @param input The raw user input string for extracting arguments.
+     * @throws PrometheusException If the command is invalid or arguments are missing.
+     */
+    private static void processCommand(Command command, String input) throws PrometheusException {
+        switch (command) {
+            case LIST:
+                printTaskList();
+                break;
+            case MARK:
+                markTask(input);
+                break;
+            case UNMARK:
+                unmarkTask(input);
+                break;
+            case TODO:
+                addTodo(input);
+                break;
+            case DEADLINE:
+                addDeadline(input);
+                break;
+            case EVENT:
+                addEvent(input);
+                break;
+            case DELETE:
+                deleteTask(input);
+                break;
+            case UNKNOWN:
+                throw new PrometheusException("'" + input.split(" ")[0] + "' is not a valid command!");
+            default:
+                throw new PrometheusException("Unexpected command: " + command);
         }
     }
 
+    /**
+     * Prints the list of tasks currently stored.
+     * If there are no tasks, prints a message indicating that the list is empty.
+     */
     private static void printTaskList() {
         System.out.println("____________________________________________________________");
         if (tasks.isEmpty()) {
@@ -64,6 +131,12 @@ public class Prometheus {
         System.out.println("____________________________________________________________");
     }
 
+    /**
+     * Adds a Todo task to the task list.
+     *
+     * @param input User input in the format: {@code todo <description>}.
+     * @throws PrometheusException If the description is missing or empty.
+     */
     private static void addTodo(String input) throws PrometheusException {
         if (input.length() <= 4 || input.substring(4).trim().isEmpty()) {
             throw new PrometheusException("The description of a todo cannot be empty.");
@@ -74,6 +147,13 @@ public class Prometheus {
         printAddConfirmation(todo);
     }
 
+    /**
+     * Adds a Deadline task to the task list.
+     *
+     * @param input User input in the format:
+     *              {@code deadline <description> /by <time>}.
+     * @throws PrometheusException If the format is invalid or required parts are missing.
+     */
     private static void addDeadline(String input) throws PrometheusException {
         if (input.length() <= 8 || !input.contains("/by")) {
             throw new PrometheusException("Please use format: deadline <description> /by <time>");
@@ -91,6 +171,13 @@ public class Prometheus {
         printAddConfirmation(deadline);
     }
 
+    /**
+     * Adds an Event task to the task list.
+     *
+     * @param input User input in the format:
+     *              {@code event <description> /from <start> /to <end>}.
+     * @throws PrometheusException If the format is invalid or required parts are missing.
+     */
     private static void addEvent(String input) throws PrometheusException {
         if (input.length() <= 5 || !input.contains("/from") || !input.contains("/to")) {
             throw new PrometheusException("Please use format: event <description> /from <start> /to <end>");
@@ -109,6 +196,11 @@ public class Prometheus {
         printAddConfirmation(event);
     }
 
+    /**
+     * Prints a confirmation message after successfully adding a task.
+     *
+     * @param task The {@link Task} that was added.
+     */
     private static void printAddConfirmation(Task task) {
         System.out.println("____________________________________________________________");
         System.out.println("Got it. I've added this task:");
@@ -117,6 +209,12 @@ public class Prometheus {
         System.out.println("____________________________________________________________");
     }
 
+    /**
+     * Marks the specified task as done.
+     *
+     * @param input User input in the format: {@code mark <task number>}.
+     * @throws PrometheusException If the task number is invalid or not an integer.
+     */
     private static void markTask(String input) throws PrometheusException {
         try {
             int index = Integer.parseInt(input.substring(5).trim()) - 1;
@@ -134,6 +232,12 @@ public class Prometheus {
         }
     }
 
+    /**
+     * Marks the specified task as not done.
+     *
+     * @param input User input in the format: {@code unmark <task number>}.
+     * @throws PrometheusException If the task number is invalid or not an integer.
+     */
     private static void unmarkTask(String input) throws PrometheusException {
         try {
             int index = Integer.parseInt(input.substring(7).trim()) - 1;
@@ -151,6 +255,12 @@ public class Prometheus {
         }
     }
 
+    /**
+     * Deletes the specified task from the task list.
+     *
+     * @param input User input in the format: {@code delete <task number>}.
+     * @throws PrometheusException If the task number is invalid or not an integer.
+     */
     private static void deleteTask(String input) throws PrometheusException {
         try {
             int index = Integer.parseInt(input.substring(7).trim()) - 1;
@@ -170,6 +280,11 @@ public class Prometheus {
         }
     }
 
+    /**
+     * Prints an error message to the console with a standard formatting block.
+     *
+     * @param errorMessage The error message to display.
+     */
     private static void showError(String errorMessage) {
         System.out.println("____________________________________________________________");
         System.out.println("Error! " + errorMessage);
