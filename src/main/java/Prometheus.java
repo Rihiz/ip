@@ -59,6 +59,13 @@ public class Prometheus {
         scanner.close();
     }
 
+    /**
+     * Processes a user command by delegating to the appropriate handler method.
+     *
+     * @param command The parsed {@link Command} enum representing the user command.
+     * @param input The raw user input string for extracting arguments.
+     * @throws PrometheusException If the command is invalid or arguments are missing.
+     */
     private static void processCommand(Command command, String input) throws PrometheusException {
         switch (command) {
             case LIST:
@@ -89,6 +96,10 @@ public class Prometheus {
         }
     }
 
+    /**
+     * Prints the list of tasks currently stored.
+     * If there are no tasks, prints a message indicating that the list is empty.
+     */
     private static void printTaskList() {
         System.out.println("____________________________________________________________");
         if (tasks.isEmpty()) {
@@ -102,6 +113,12 @@ public class Prometheus {
         System.out.println("____________________________________________________________");
     }
 
+    /**
+     * Adds a Todo task to the task list.
+     *
+     * @param input User input in the format: {@code todo <description>}.
+     * @throws PrometheusException If the description is missing or empty.
+     */
     private static void addTodo(String input) throws PrometheusException {
         if (input.length() <= 4 || input.substring(4).trim().isEmpty()) {
             throw new PrometheusException("The description of a todo cannot be empty.");
@@ -112,6 +129,13 @@ public class Prometheus {
         printAddConfirmation(todo);
     }
 
+    /**
+     * Adds a Deadline task to the task list.
+     *
+     * @param input User input in the format:
+     *              {@code deadline <description> /by <time>}.
+     * @throws PrometheusException If the format is invalid or required parts are missing.
+     */
     private static void addDeadline(String input) throws PrometheusException {
         if (input.length() <= 8 || !input.contains("/by")) {
             throw new PrometheusException("Please use format: deadline <description> /by <time>");
@@ -129,6 +153,13 @@ public class Prometheus {
         printAddConfirmation(deadline);
     }
 
+    /**
+     * Adds an Event task to the task list.
+     *
+     * @param input User input in the format:
+     *              {@code event <description> /from <start> /to <end>}.
+     * @throws PrometheusException If the format is invalid or required parts are missing.
+     */
     private static void addEvent(String input) throws PrometheusException {
         if (input.length() <= 5 || !input.contains("/from") || !input.contains("/to")) {
             throw new PrometheusException("Please use format: event <description> /from <start> /to <end>");
@@ -147,6 +178,11 @@ public class Prometheus {
         printAddConfirmation(event);
     }
 
+    /**
+     * Prints a confirmation message after successfully adding a task.
+     *
+     * @param task The {@link Task} that was added.
+     */
     private static void printAddConfirmation(Task task) {
         System.out.println("____________________________________________________________");
         System.out.println("Got it. I've added this task:");
@@ -155,6 +191,12 @@ public class Prometheus {
         System.out.println("____________________________________________________________");
     }
 
+    /**
+     * Marks the specified task as done.
+     *
+     * @param input User input in the format: {@code mark <task number>}.
+     * @throws PrometheusException If the task number is invalid or not an integer.
+     */
     private static void markTask(String input) throws PrometheusException {
         try {
             int index = Integer.parseInt(input.substring(5).trim()) - 1;
@@ -172,6 +214,12 @@ public class Prometheus {
         }
     }
 
+    /**
+     * Marks the specified task as not done.
+     *
+     * @param input User input in the format: {@code unmark <task number>}.
+     * @throws PrometheusException If the task number is invalid or not an integer.
+     */
     private static void unmarkTask(String input) throws PrometheusException {
         try {
             int index = Integer.parseInt(input.substring(7).trim()) - 1;
@@ -189,6 +237,12 @@ public class Prometheus {
         }
     }
 
+    /**
+     * Deletes the specified task from the task list.
+     *
+     * @param input User input in the format: {@code delete <task number>}.
+     * @throws PrometheusException If the task number is invalid or not an integer.
+     */
     private static void deleteTask(String input) throws PrometheusException {
         try {
             int index = Integer.parseInt(input.substring(7).trim()) - 1;
@@ -208,6 +262,11 @@ public class Prometheus {
         }
     }
 
+    /**
+     * Prints an error message to the console with a standard formatting block.
+     *
+     * @param errorMessage The error message to display.
+     */
     private static void showError(String errorMessage) {
         System.out.println("____________________________________________________________");
         System.out.println("Error! " + errorMessage);
