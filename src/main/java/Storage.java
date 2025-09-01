@@ -1,4 +1,3 @@
-// File: src/main/java/Storage.java
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,21 +16,23 @@ public class Storage {
             // Create data directory if it doesn't exist
             File directory = new File(DIRECTORY_PATH);
             if (!directory.exists()) {
-                directory.mkdirs();
+                if (!directory.mkdirs()) {
+                    throw new PrometheusException("Failed to create data directory");
+                }
             }
 
-            // Write tasks to file
-            FileWriter writer = new FileWriter(FILE_PATH);
-            for (Task task : tasks) {
-                writer.write(taskToFileString(task) + System.lineSeparator());
+            // Write tasks to file using their own serialization
+            try (FileWriter writer = new FileWriter(FILE_PATH)) {
+                for (Task task : tasks) {
+                    writer.write(task.toFileString() + System.lineSeparator());
+                }
             }
-            writer.close();
         } catch (IOException e) {
             throw new PrometheusException("Error saving tasks to file: " + e.getMessage());
         }
     }
 
-    public static ArrayList<Task> loadTasks() throws PrometheusException {
+    public static ArrayList<Task> loadTasks() {
         ArrayList<Task> tasks = new ArrayList<>();
         File file = new File(FILE_PATH);
 
@@ -42,63 +43,20 @@ public class Storage {
 
         try {
             List<String> lines = Files.readAllLines(Paths.get(FILE_PATH));
-            for (String line : lines) {
-                Task task = parseTaskFromString(line);
-                if (task != null) {
+            for (int i = 0; i < lines.size(); i++) {
+                String line = lines.get(i);
+                try {
+                    Task task = Task.fromFileString(line);
                     tasks.add(task);
+                } catch (PrometheusException e) {
+                    System.err.println("Skipping invalid task at line " + (i + 1) + ": " + e.getMessage());
+                    // Continue with other lines
                 }
             }
             return tasks;
         } catch (IOException e) {
-            throw new PrometheusException("Error loading tasks from file: " + e.getMessage());
-        }
-    }
-
-    private static String taskToFileString(Task task) {
-        if (task instanceof Todo) {
-            return "T | " + (task.isDone() ? "1" : "0") + " | " + task.description;
-        } else if (task instanceof Deadline) {
-            Deadline deadline = (Deadline) task;
-            return "D | " + (deadline.isDone() ? "1" : "0") + " | " + deadline.description + " | " + deadline.by;
-        } else if (task instanceof Event) {
-            Event event = (Event) task;
-            return "E | " + (event.isDone() ? "1" : "0") + " | " + event.description + " | " + event.from + " | " + event.to;
-        }
-        return "";
-    }
-
-    private static Task parseTaskFromString(String line) {
-        try {
-            String[] parts = line.split(" \\| ");
-            if (parts.length < 3) return null;
-
-            String type = parts[0].trim();
-            boolean isDone = parts[1].trim().equals("1");
-            String description = parts[2].trim();
-
-            Task task = null;
-            switch (type) {
-                case "T":
-                    task = new Todo(description);
-                    break;
-                case "D":
-                    if (parts.length >= 4) {
-                        task = new Deadline(description, parts[3].trim());
-                    }
-                    break;
-                case "E":
-                    if (parts.length >= 5) {
-                        task = new Event(description, parts[3].trim(), parts[4].trim());
-                    }
-                    break;
-            }
-
-            if (task != null && isDone) {
-                task.markAsDone();
-            }
-            return task;
-        } catch (Exception e) {
-            return null; // Skip malformed lines
+            System.err.println("Error loading tasks from file: " + e.getMessage());
+            return new ArrayList<>(); // Return empty list instead of crashing
         }
     }
 }
