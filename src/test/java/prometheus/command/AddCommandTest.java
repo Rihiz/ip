@@ -31,8 +31,6 @@ public class AddCommandTest {
     public void createTask_emptyTodoDescription_throwsException() {
         AddCommand addCommand = new AddCommand("todo", "");
 
-        assertThrows(PrometheusException.class, () -> {
-            addCommand.createTask();
-        });
+        assertThrows(PrometheusException.class, addCommand::createTask);
     }
 }
