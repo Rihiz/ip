@@ -5,9 +5,9 @@
 ///
 /// Supported commands include:
 /// - list: Displays all tasks.
-/// - todo description: Adds a Todo task.
-/// - deadline <description> /by <time>: Adds a Deadline task.
-/// - event <description> /from <start> /to <end>: Adds an Event task.
+/// - todo description: Adds a prometheus.task.Todo task.
+/// - deadline <description> /by <time>: Adds a prometheus.task.Deadline task.
+/// - event <description> /from <start> /to <end>: Adds an prometheus.task.Event task.
 /// - mark <task number>: Marks a task as completed.
 /// - unmark <task number>: Marks a task as not completed.
 /// - delete <task number>: Deletes a task.
@@ -16,6 +16,10 @@
 ///  @Errors are reported back to the user with descriptive messages.
 ///  * All task operations are wrapped in exception handling to ensure
 ///  * predictable behavior.
+
+package prometheus;
+
+import prometheus.command.Command;
 
 public class Prometheus {
     private Storage storage;

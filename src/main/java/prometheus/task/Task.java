@@ -1,3 +1,6 @@
+package prometheus.task;
+
+import prometheus.PrometheusException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;

@@ -1,3 +1,6 @@
+package prometheus.task;
+
+import prometheus.PrometheusException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -7,7 +10,7 @@ public class Deadline extends Task {
     private static final DateTimeFormatter INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
     private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma");
 
-    public Deadline(String description, String byString) throws PrometheusException{
+    public Deadline(String description, String byString) throws PrometheusException {
         super(description);
         this.by = parseDateTime(byString);
     }

@@ -1,18 +1,33 @@
-public class DeleteCommand extends Command {
-    private String arguments;
+package prometheus.command;
+import prometheus.PrometheusException;
+import prometheus.Storage;
+import prometheus.Ui;
+import prometheus.task.Task;
+import prometheus.TaskList;
 
-    public DeleteCommand(String arguments) {
+public class MarkCommand extends Command {
+    private String arguments;
+    private boolean isMark;
+
+    public MarkCommand(String arguments, boolean isMark) {
         this.arguments = arguments;
+        this.isMark = isMark;
     }
 
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws PrometheusException {
         int index = parseIndex(arguments, tasks.size());
-        Task removedTask = tasks.remove(index);
-        storage.save(tasks);
+        Task task = tasks.get(index);
 
-        ui.showMessage("Noted. I've removed this task:\n  " + removedTask +
-                "\nNow you have " + tasks.size() + " tasks in the list.");
+        if (isMark) {
+            task.markAsDone();
+            ui.showMessage("Nice! I've marked this task as done:\n  " + task);
+        } else {
+            task.markAsNotDone();
+            ui.showMessage("OK, I've marked this task as not done yet:\n  " + task);
+        }
+
+        storage.save(tasks);
     }
 
     private int parseIndex(String argument, int maxIndex) throws PrometheusException {

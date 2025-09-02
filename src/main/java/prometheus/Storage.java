@@ -1,3 +1,6 @@
+package prometheus;
+import prometheus.task.Task;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
