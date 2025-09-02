@@ -2,61 +2,56 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Storage {
-    private static final String FILE_PATH = "./data/Prometheus.txt";
-    private static final String DIRECTORY_PATH = "./data/";
+    private String filePath;
 
-    public static void saveTasks(ArrayList<Task> tasks) throws PrometheusException {
-        try {
-            // Create data directory if it doesn't exist
-            File directory = new File(DIRECTORY_PATH);
-            if (!directory.exists()) {
-                if (!directory.mkdirs()) {
-                    throw new PrometheusException("Failed to create data directory");
-                }
-            }
-
-            // Write tasks to file using their own serialization
-            try (FileWriter writer = new FileWriter(FILE_PATH)) {
-                for (Task task : tasks) {
-                    writer.write(task.toFileString() + System.lineSeparator());
-                }
-            }
-        } catch (IOException e) {
-            throw new PrometheusException("Error saving tasks to file: " + e.getMessage());
-        }
+    public Storage(String filePath) {
+        this.filePath = filePath;
     }
 
-    public static ArrayList<Task> loadTasks() {
+    public ArrayList<Task> load() throws PrometheusException {
         ArrayList<Task> tasks = new ArrayList<>();
-        File file = new File(FILE_PATH);
+        File file = new File(filePath);
 
-        // Return empty list if file doesn't exist (first run)
         if (!file.exists()) {
             return tasks;
         }
 
         try {
-            List<String> lines = Files.readAllLines(Paths.get(FILE_PATH));
+            List<String> lines = Files.readAllLines(Paths.get(filePath));
             for (int i = 0; i < lines.size(); i++) {
-                String line = lines.get(i);
                 try {
-                    Task task = Task.fromFileString(line);
+                    Task task = Task.fromFileString(lines.get(i));
                     tasks.add(task);
                 } catch (PrometheusException e) {
-                    System.err.println("Skipping invalid task at line " + (i + 1) + ": " + e.getMessage());
-                    // Continue with other lines
+                    throw new PrometheusException("Line " + (i + 1) + ": " + e.getMessage());
                 }
             }
             return tasks;
         } catch (IOException e) {
-            System.err.println("Error loading tasks from file: " + e.getMessage());
-            return new ArrayList<>(); // Return empty list instead of crashing
+            throw new PrometheusException("Failed to load tasks: " + e.getMessage());
+        }
+    }
+
+    public void save(TaskList tasks) throws PrometheusException {
+        try {
+            File directory = new File("./data/");
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            try (FileWriter writer = new FileWriter(filePath)) {
+                for (int i = 0; i < tasks.size(); i++) {
+                    Task task = tasks.get(i);
+                    writer.write(task.toFileString() + System.lineSeparator());
+                }
+            }
+        } catch (IOException e) {
+            throw new PrometheusException("Failed to save tasks: " + e.getMessage());
         }
     }
 }
