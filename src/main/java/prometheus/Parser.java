@@ -1,7 +1,11 @@
+package prometheus;
+
+import prometheus.command.*;
+
 public class Parser {
     public static Command parse(String fullCommand) throws PrometheusException {
         if (fullCommand.isEmpty()) {
-            throw new PrometheusException("Command cannot be empty!");
+            throw new PrometheusException("prometheus.command.Command cannot be empty!");
         }
 
         String[] parts = fullCommand.split(" ", 2);

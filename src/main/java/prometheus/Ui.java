@@ -1,3 +1,5 @@
+package prometheus;
+
 import java.util.Scanner;
 
 public class Ui {
