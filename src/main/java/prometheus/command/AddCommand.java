@@ -28,7 +28,7 @@ public class AddCommand extends Command {
                 "\nNow you have " + tasks.size() + " tasks in the list.");
     }
 
-    private Task createTask() throws PrometheusException {
+    Task createTask() throws PrometheusException {
         switch (commandWord) {
             case "todo":
                 return createTodo();
