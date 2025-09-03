@@ -58,16 +58,12 @@ public class AddCommand extends Command {
      * @throws PrometheusException If the task creation fails due to invalid input
      */
     Task createTask() throws PrometheusException {
-        switch (commandWord) {
-            case "todo":
-                return createTodo();
-            case "deadline":
-                return createDeadline();
-            case "event":
-                return createEvent();
-            default:
-                throw new PrometheusException("Unknown command: " + commandWord);
-        }
+        return switch (commandWord) {
+            case "todo" -> createTodo();
+            case "deadline" -> createDeadline();
+            case "event" -> createEvent();
+            default -> throw new PrometheusException("Unknown command: " + commandWord);
+        };
     }
 
     /**
