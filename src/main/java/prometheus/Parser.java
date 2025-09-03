@@ -2,7 +2,29 @@ package prometheus;
 
 import prometheus.command.*;
 
+/**
+ * Parses user input commands and converts them into executable Command objects.
+ * This class handles the interpretation of text commands into their corresponding
+ * Command implementations. It supports various command types including task
+ * management commands (add, delete, mark) and system commands (list, exit).
+ */
 public class Parser {
+    /**
+     * Parses a full command string into a Command object.
+     * The command format should be: commandWord [arguments]
+     * Supported commands:
+     * - bye: Exit the application
+     * - list: Show all tasks
+     * - mark/unmark [index]: Mark or unmark a task as done
+     * - todo [description]: Add a todo task
+     * - deadline [description] /by [time]: Add a deadline task
+     * - event [description] /from [start] /to [end]: Add an event task
+     * - delete [index]: Delete a task
+     *
+     * @param fullCommand The complete command string to parse
+     * @return A Command object corresponding to the input command
+     * @throws PrometheusException If the command is empty or invalid
+     */
     public static Command parse(String fullCommand) throws PrometheusException {
         if (fullCommand.isEmpty()) {
             throw new PrometheusException("prometheus.command.Command cannot be empty!");

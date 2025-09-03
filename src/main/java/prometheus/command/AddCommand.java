@@ -10,15 +10,38 @@ import prometheus.TaskList;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Handles the creation and addition of new tasks to the task list.
+ * This class supports creation of three types of tasks:
+ * - Todo: Simple tasks without time constraints
+ * - Deadline: Tasks with a completion deadline
+ * - Event: Tasks with start and end times
+ */
 public class AddCommand extends Command {
     private String commandWord;
     private String arguments;
 
+    /**
+     * Constructs an AddCommand with the specified command type and arguments.
+     *
+     * @param commandWord The type of task to create ("todo", "deadline", or "event")
+     * @param arguments The description and time-related arguments for the task
+     */
     public AddCommand(String commandWord, String arguments) {
         this.commandWord = commandWord;
         this.arguments = arguments;
     }
 
+    /**
+     * Executes the add command by creating and storing a new task.
+     * Creates the appropriate task type, adds it to the task list,
+     * saves the updated list, and shows a confirmation message.
+     *
+     * @param tasks The task list to add the new task to
+     * @param ui The UI handler for displaying messages
+     * @param storage The storage handler for saving tasks
+     * @throws PrometheusException If task creation or storage fails
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws PrometheusException {
         Task task = createTask();
@@ -28,6 +51,12 @@ public class AddCommand extends Command {
                 "\nNow you have " + tasks.size() + " tasks in the list.");
     }
 
+    /**
+     * Creates a task based on the command type.
+     *
+     * @return The created task object
+     * @throws PrometheusException If the task creation fails due to invalid input
+     */
     Task createTask() throws PrometheusException {
         switch (commandWord) {
             case "todo":
@@ -41,6 +70,12 @@ public class AddCommand extends Command {
         }
     }
 
+    /**
+     * Creates a Todo task from the provided arguments.
+     *
+     * @return A new Todo task
+     * @throws PrometheusException If the task description is empty
+     */
     private Todo createTodo() throws PrometheusException {
         if (arguments.trim().isEmpty()) {
             throw new PrometheusException("The description of a todo cannot be empty.");
@@ -48,6 +83,13 @@ public class AddCommand extends Command {
         return new Todo(arguments.trim());
     }
 
+    /**
+     * Creates a Deadline task from the provided arguments.
+     * Expected format: description /by yyyy-MM-dd HHmm
+     *
+     * @return A new Deadline task
+     * @throws PrometheusException If the format is invalid or parsing fails
+     */
     private Deadline createDeadline() throws PrometheusException {
         String[] parts = arguments.split("/by", 2);
         if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
@@ -61,6 +103,13 @@ public class AddCommand extends Command {
         return new Deadline(description, by);
     }
 
+    /**
+     * Creates an Event task from the provided arguments.
+     * Expected format: description /from yyyy-MM-dd HHmm /to yyyy-MM-dd HHmm
+     *
+     * @return A new Event task
+     * @throws PrometheusException If the format is invalid or parsing fails
+     */
     private Event createEvent() throws PrometheusException {
         String[] parts = arguments.split("/from|/to", 3);
         if (parts.length < 3 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty() || parts[2].trim().isEmpty()) {
@@ -76,6 +125,14 @@ public class AddCommand extends Command {
         return new Event(description, from, to);
     }
 
+    /**
+     * Parses a date-time string into a LocalDateTime object.
+     * Expected format: yyyy-MM-dd HHmm (e.g., 2019-12-02 1800)
+     *
+     * @param dateTimeString The date-time string to parse
+     * @return The parsed LocalDateTime
+     * @throws PrometheusException If the date-time format is invalid
+     */
     private LocalDateTime parseDateTime(String dateTimeString) throws PrometheusException {
         try {
             return LocalDateTime.parse(dateTimeString, DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm"));
@@ -84,6 +141,11 @@ public class AddCommand extends Command {
         }
     }
 
+    /**
+     * Indicates whether this command exits the application.
+     *
+     * @return false as this command does not exit the application
+     */
     @Override
     public boolean isExit() {
         return false;

@@ -1,31 +1,26 @@
-/// The Prometheus class represents a simple command-line chatbot
-/// that manages a task list. Users can add, delete, mark, unmark,
-/// and list tasks via text commands. The chatbot runs in an
-/// interactive loop until the user types "bye".
-///
-/// Supported commands include:
-/// - list: Displays all tasks.
-/// - todo description: Adds a prometheus.task.Todo task.
-/// - deadline <description> /by <time>: Adds a prometheus.task.Deadline task.
-/// - event <description> /from <start> /to <end>: Adds an prometheus.task.Event task.
-/// - mark <task number>: Marks a task as completed.
-/// - unmark <task number>: Marks a task as not completed.
-/// - delete <task number>: Deletes a task.
-/// - bye: Exits the chatbot.*
-///
-///  @Errors are reported back to the user with descriptive messages.
-///  * All task operations are wrapped in exception handling to ensure
-///  * predictable behavior.
-
 package prometheus;
 
 import prometheus.command.Command;
 
+/**
+ * A command-line chatbot that manages a task list with various operations.
+ * This class serves as the main entry point for the Prometheus task management system.
+ * It handles user interactions, task operations, and persistent storage of tasks.
+ *
+ * @author Prometheus
+ */
 public class Prometheus {
     private Storage storage;
     private TaskList tasks;
     private Ui ui;
 
+    /**
+     * Constructs a new Prometheus chatbot instance.
+     * Initializes the UI, storage, and task list components.
+     * Attempts to load existing tasks from storage, creating an empty list if loading fails.
+     *
+     * @param filePath The path to the file where tasks are stored
+     */
     public Prometheus(String filePath) {
         ui = new Ui();
         storage = new Storage(filePath);
@@ -37,6 +32,11 @@ public class Prometheus {
         }
     }
 
+    /**
+     * Starts the main interaction loop of the chatbot.
+     * Continuously reads user commands and executes them until an exit command is received.
+     * Handles and displays any errors that occur during command execution.
+     */
     public void run() {
         ui.showWelcome();
         boolean isExit = false;
@@ -53,6 +53,12 @@ public class Prometheus {
         }
     }
 
+    /**
+     * The main entry point of the application.
+     * Creates a new Prometheus instance and starts the interaction loop.
+     *
+     * @param args Command line arguments (not used)
+     */
     public static void main(String[] args) {
         new Prometheus("./data/Prometheus.txt").run();
     }
