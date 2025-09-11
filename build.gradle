@@ -34,7 +34,7 @@ test {
 }
 
 application {
-    mainClass.set("ming.gui.Launcher");
+    mainClass.set("prometheus.gui.Launcher");
 }
 
 shadowJar {

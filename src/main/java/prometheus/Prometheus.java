@@ -62,4 +62,10 @@ public class Prometheus {
     public static void main(String[] args) {
         new Prometheus("./data/Prometheus.txt").run();
     }
+    /**
+     * Generates a response for the user's chat message.
+     */
+    public String getResponse(String input) {
+        return "Duke heard: " + input;
+    }
 }
