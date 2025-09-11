@@ -4,35 +4,31 @@ import java.util.Scanner;
 
 public class Ui {
     private Scanner scanner;
+    private String lastOutput;
 
     public Ui() {
         scanner = new Scanner(System.in);
+        lastOutput = "";
     }
 
     public void showWelcome() {
-        System.out.println("Hello! I'm Prometheus");
-        System.out.println("What can I do for you?");
-        System.out.println("____________________________________________________________");
-    }
-
-    public String readCommand() {
-        return scanner.nextLine().trim();
-    }
-
-    public void showLine() {
-        System.out.println("____________________________________________________________");
+        setLastOutput("Hello! I'm Prometheus\nWhat can I do for you?");
     }
 
     public void showError(String message) {
-        showLine();
-        System.out.println("Error! " + message);
-        showLine();
+        setLastOutput("Error! " + message);
     }
 
     public void showMessage(String message) {
-        showLine();
-        System.out.println(message);
-        showLine();
+        setLastOutput(message);
+    }
+
+    private void setLastOutput(String message) {
+        this.lastOutput = message;
+    }
+
+    public String getLastOutput() {
+        return lastOutput;
     }
 
     public void close() {
