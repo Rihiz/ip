@@ -35,6 +35,7 @@ public class Parser {
         String arguments = parts.length > 1 ? parts[1] : "";
 
         return switch (commandWord) {
+            case "welcome" -> new WelcomeCommand();
             case "bye" -> new ExitCommand();
             case "list" -> new ListCommand();
             case "mark" -> new MarkCommand(arguments, true);

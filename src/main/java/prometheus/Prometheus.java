@@ -37,7 +37,7 @@ public class Prometheus {
      * Continuously reads user commands and executes them until an exit command is received.
      * Handles and displays any errors that occur during command execution.
      */
-    public void run() {
+    /**public void run() {
         ui.showWelcome();
         boolean isExit = false;
 
@@ -52,20 +52,24 @@ public class Prometheus {
             }
         }
     }
+     **/
+    public String getResponse(String input) {
+        try {
+            Command command = Parser.parse(input);
+            command.execute(tasks, ui, storage);
+            return ui.getLastOutput();
 
+        } catch (PrometheusException e) {
+            return "Error! " + e.getMessage();
+        }
+    }
     /**
      * The main entry point of the application.
      * Creates a new Prometheus instance and starts the interaction loop.
      *
      * @param args Command line arguments (not used)
      */
-    public static void main(String[] args) {
-        new Prometheus("./data/Prometheus.txt").run();
-    }
-    /**
-     * Generates a response for the user's chat message.
-     */
-    public String getResponse(String input) {
-        return "Duke heard: " + input;
-    }
+//    public static void main(String[] args) {
+//        new Prometheus("./data/Prometheus.txt").run();
+//    }
 }
