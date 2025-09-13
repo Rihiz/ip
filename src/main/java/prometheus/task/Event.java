@@ -2,7 +2,7 @@ package prometheus.task;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+
 import prometheus.PrometheusException;
 
 /**
@@ -12,10 +12,6 @@ import prometheus.PrometheusException;
  * both string and LocalDateTime time specifications.
  */
 public class Event extends Task {
-    /**
-     * Formatter for parsing date-time input strings in the format "yyyy-MM-dd HHmm".
-     */
-    private static final DateTimeFormatter INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
 
     /**
      * Formatter for displaying date-time in the format "MMM dd yyyy, h:mma".
@@ -24,24 +20,6 @@ public class Event extends Task {
 
     protected LocalDateTime from;
     protected LocalDateTime to;
-
-    /**
-     * Constructs an Event task with description and time specifications as strings.
-     *
-     * @param description The description of the event
-     * @param fromString The start time in the format "yyyy-MM-dd HHmm"
-     * @param toString The end time in the format "yyyy-MM-dd HHmm"
-     * @throws PrometheusException If the time strings cannot be parsed or if end time is before start time
-     */
-    public Event(String description, String fromString, String toString) throws PrometheusException {
-        super(description);
-        this.from = parseDateTime(fromString);
-        this.to = parseDateTime(toString);
-
-        if (this.from.isAfter(this.to)) {
-            throw new PrometheusException("End time must be after start time!");
-        }
-    }
 
     /**
      * Constructs an Event task with description and time specifications as LocalDateTime objects.
@@ -58,21 +36,6 @@ public class Event extends Task {
 
         if (this.from.isAfter(this.to)) {
             throw new PrometheusException("End time must be after start time!");
-        }
-    }
-
-    /**
-     * Parses a date-time string into a LocalDateTime object.
-     *
-     * @param dateTimeString The date-time string to parse
-     * @return The parsed LocalDateTime object
-     * @throws PrometheusException If the date-time string is in an invalid format
-     */
-    private LocalDateTime parseDateTime(String dateTimeString) throws PrometheusException {
-        try {
-            return LocalDateTime.parse(dateTimeString, INPUT_FORMATTER);
-        } catch (DateTimeParseException e) {
-            throw new PrometheusException("Invalid date format! Please use: yyyy-MM-dd HHmm (e.g., 2019-12-02 1800)");
         }
     }
 

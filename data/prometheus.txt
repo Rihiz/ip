@@ -1,2 +1,3 @@
-T | 0 | create nuclear bomb
-D | 0 | bomb Hiroshima and Nagasaki | 1945-07-06 1800
+E | 1 | talk | 2022-01-01 1800 | 2022-01-01 1900
+E | 1 | test | 2022-01-01 1900 | 2022-01-01 2000
+T | 0 | hw
