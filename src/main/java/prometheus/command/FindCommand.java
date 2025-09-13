@@ -2,9 +2,9 @@ package prometheus.command;
 
 import prometheus.PrometheusException;
 import prometheus.Storage;
-import prometheus.Ui;
 import prometheus.task.Task;
 import prometheus.TaskList;
+import prometheus.Ui;
 import java.util.ArrayList;
 
 /**

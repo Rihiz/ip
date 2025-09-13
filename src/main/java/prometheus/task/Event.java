@@ -1,9 +1,9 @@
 package prometheus.task;
 
-import prometheus.PrometheusException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import prometheus.PrometheusException;
 
 /**
  * Represents a task with a specific start and end time.
@@ -12,12 +12,18 @@ import java.time.format.DateTimeParseException;
  * both string and LocalDateTime time specifications.
  */
 public class Event extends Task {
+    /**
+     * Formatter for parsing date-time input strings in the format "yyyy-MM-dd HHmm".
+     */
+    private static final DateTimeFormatter INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
+
+    /**
+     * Formatter for displaying date-time in the format "MMM dd yyyy, h:mma".
+     */
+    private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma");
 
     protected LocalDateTime from;
     protected LocalDateTime to;
-
-    private static final DateTimeFormatter INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
-    private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma");
 
     /**
      * Constructs an Event task with description and time specifications as strings.
@@ -110,6 +116,7 @@ public class Event extends Task {
      */
     @Override
     public String toString() {
-        return "[E]" + super.toString() + " (from: " + from.format(OUTPUT_FORMATTER) + " to: " + to.format(OUTPUT_FORMATTER) + ")";
+        return "[E]" + super.toString() + " (from: " + from.format(OUTPUT_FORMATTER)
+                + " to: " + to.format(OUTPUT_FORMATTER) + ")";
     }
 }

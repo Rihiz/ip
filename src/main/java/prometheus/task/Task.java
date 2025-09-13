@@ -1,9 +1,10 @@
 package prometheus.task;
 
-import prometheus.PrometheusException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+
+import prometheus.PrometheusException;
 
 /**
  * Abstract base class for all tasks in the Prometheus application.
@@ -123,25 +124,25 @@ public abstract class Task {
     private static Task createTaskFromPrefix(String typePrefix, String description, String[] parts)
             throws PrometheusException {
         switch (typePrefix) {
-            case "T":
-                return new Todo(description);
-            case "D":
-                if (parts.length >= 4) {
-                    LocalDateTime by = parseDateTime(parts[3].trim());
-                    return new Deadline(description, by);
-                } else {
-                    throw new PrometheusException("Invalid deadline format");
-                }
-            case "E":
-                if (parts.length >= 5) {
-                    LocalDateTime from = parseDateTime(parts[3].trim());
-                    LocalDateTime to = parseDateTime(parts[4].trim());
-                    return new Event(description, from, to);
-                } else {
-                    throw new PrometheusException("Invalid event format");
-                }
-            default:
-                throw new PrometheusException("Unknown task type: " + typePrefix);
+        case "T":
+            return new Todo(description);
+        case "D":
+            if (parts.length >= 4) {
+                LocalDateTime by = parseDateTime(parts[3].trim());
+                return new Deadline(description, by);
+            } else {
+                throw new PrometheusException("Invalid deadline format");
+            }
+        case "E":
+            if (parts.length >= 5) {
+                LocalDateTime from = parseDateTime(parts[3].trim());
+                LocalDateTime to = parseDateTime(parts[4].trim());
+                return new Event(description, from, to);
+            } else {
+                throw new PrometheusException("Invalid event format");
+            }
+        default:
+            throw new PrometheusException("Unknown task type: " + typePrefix);
         }
     }
 

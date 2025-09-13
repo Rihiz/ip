@@ -1,7 +1,7 @@
 package prometheus.command;
 import prometheus.Storage;
-import prometheus.Ui;
 import prometheus.TaskList;
+import prometheus.Ui;
 
 /**
  * Represents a command to exit the Prometheus application.

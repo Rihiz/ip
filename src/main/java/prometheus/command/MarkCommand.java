@@ -1,9 +1,9 @@
 package prometheus.command;
 import prometheus.PrometheusException;
 import prometheus.Storage;
+import prometheus.TaskList;
 import prometheus.Ui;
 import prometheus.task.Task;
-import prometheus.TaskList;
 
 /**
  * Represents a command to mark or unmark tasks as done in the task list.
@@ -11,8 +11,8 @@ import prometheus.TaskList;
  * It supports both marking a task as done and marking it as not done.
  */
 public class MarkCommand extends Command {
-    private String arguments;
-    private boolean isMark;
+    private final String arguments;
+    private final boolean isMark;
 
     /**
      * Constructs a MarkCommand with the specified index and marking action.
@@ -49,27 +49,6 @@ public class MarkCommand extends Command {
         }
 
         storage.save(tasks);
-    }
-
-    /**
-     * Parses and validates the task index from the command argument.
-     * Converts the 1-based user input index to a 0-based array index.
-     *
-     * @param argument The string argument containing the task index
-     * @param maxIndex The maximum valid index (size of the task list)
-     * @return The parsed and validated 0-based index
-     * @throws PrometheusException If the index is not a number or out of valid range
-     */
-    private int parseIndex(String argument, int maxIndex) throws PrometheusException {
-        try {
-            int index = Integer.parseInt(argument.trim()) - 1;
-            if (index < 0 || index >= maxIndex) {
-                throw new PrometheusException("Invalid task number! Please choose between 1 and " + maxIndex);
-            }
-            return index;
-        } catch (NumberFormatException e) {
-            throw new PrometheusException("Please enter a valid task number.");
-        }
     }
 
     /**

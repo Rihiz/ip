@@ -40,7 +40,8 @@ application {
 
 checkstyle {
     toolVersion = '11.0.0'
-    configFile = file('config/checkstyle/checkstyle.xml')
+    configFile = file("config/checkstyle/checkstyle.xml")  // Relative path
+    configProperties = ['suppressionFile': 'config/checkstyle/suppressions.xml']
 }
 
 shadowJar {

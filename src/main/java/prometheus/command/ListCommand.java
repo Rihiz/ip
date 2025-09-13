@@ -1,8 +1,8 @@
 package prometheus.command;
 import prometheus.PrometheusException;
 import prometheus.Storage;
-import prometheus.Ui;
 import prometheus.TaskList;
+import prometheus.Ui;
 
 /**
  * Represents a command to display all tasks in the task list.

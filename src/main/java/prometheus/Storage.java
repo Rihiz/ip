@@ -1,5 +1,4 @@
 package prometheus;
-import prometheus.task.Task;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -8,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import prometheus.task.Task;
 
 /**
  * Handles the persistence of tasks to and from a file storage.
@@ -15,7 +15,7 @@ import java.util.List;
  * allowing the application to maintain task data between sessions.
  */
 public class Storage {
-    private String filePath;
+    private final String filePath;
 
     /**
      * Constructs a new Storage instance with the specified file path.
@@ -68,8 +68,8 @@ public class Storage {
     public void save(TaskList tasks) throws PrometheusException {
         try {
             File directory = new File("./data/");
-            if (!directory.exists()) {
-                directory.mkdirs();
+            if (!directory.exists() && !directory.mkdirs()) {
+                throw new PrometheusException("Failed to create directory: " + directory.getPath());
             }
 
             try (FileWriter writer = new FileWriter(filePath)) {

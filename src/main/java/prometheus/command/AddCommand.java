@@ -1,14 +1,16 @@
 package prometheus.command;
-import prometheus.PrometheusException;
-import prometheus.Storage;
-import prometheus.Ui;
-import prometheus.task.Task;
-import prometheus.task.Todo;
-import prometheus.task.Deadline;
-import prometheus.task.Event;
-import prometheus.TaskList;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import prometheus.PrometheusException;
+
+import prometheus.Storage;
+import prometheus.TaskList;
+import prometheus.Ui;
+import prometheus.task.Deadline;
+import prometheus.task.Event;
+import prometheus.task.Task;
+import prometheus.task.Todo;
 
 /**
  * Handles the creation and addition of new tasks to the task list.
@@ -18,8 +20,8 @@ import java.time.format.DateTimeFormatter;
  * - Event: Tasks with start and end times
  */
 public class AddCommand extends Command {
-    private String commandWord;
-    private String arguments;
+    private final String commandWord;
+    private final String arguments;
 
     /**
      * Constructs an AddCommand with the specified command type and arguments.
@@ -47,8 +49,8 @@ public class AddCommand extends Command {
         Task task = createTask();
         tasks.add(task);
         storage.save(tasks);
-        ui.showMessage("Got it. I've added this task:\n  " + task +
-                "\nNow you have " + tasks.size() + " tasks in the list.");
+        ui.showMessage("Got it. I've added this task:\n  " + task
+                + "\nNow you have " + tasks.size() + " tasks in the list.");
     }
 
     /**
@@ -59,10 +61,10 @@ public class AddCommand extends Command {
      */
     Task createTask() throws PrometheusException {
         return switch (commandWord) {
-            case "todo" -> createTodo();
-            case "deadline" -> createDeadline();
-            case "event" -> createEvent();
-            default -> throw new PrometheusException("Unknown command: " + commandWord);
+        case "todo" -> createTodo();
+        case "deadline" -> createDeadline();
+        case "event" -> createEvent();
+        default -> throw new PrometheusException("Unknown command: " + commandWord);
         };
     }
 
@@ -88,7 +90,8 @@ public class AddCommand extends Command {
      */
     private Deadline createDeadline() throws PrometheusException {
         String[] parts = arguments.split("/by", 2);
-        if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
+        boolean isValid = parts.length >= 2 && !parts[0].trim().isEmpty() && !parts[1].trim().isEmpty();
+        if (isValid) {
             throw new PrometheusException("Please use format: deadline <description> /by yyyy-MM-dd HHmm");
         }
 
@@ -108,8 +111,10 @@ public class AddCommand extends Command {
      */
     private Event createEvent() throws PrometheusException {
         String[] parts = arguments.split("/from|/to", 3);
-        if (parts.length < 3 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty() || parts[2].trim().isEmpty()) {
-            throw new PrometheusException("Please use format: event <description> /from yyyy-MM-dd HHmm /to yyyy-MM-dd HHmm");
+        if (parts.length < 3 || parts[0].trim().isEmpty()
+                || parts[1].trim().isEmpty() || parts[2].trim().isEmpty()) {
+            throw new PrometheusException(
+                    "Please use format: event <description> /from yyyy-MM-dd HHmm /to yyyy-MM-dd HHmm");
         }
 
         String description = parts[0].trim();
