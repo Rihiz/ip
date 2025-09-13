@@ -46,7 +46,12 @@ public class AddCommand extends Command {
      */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws PrometheusException {
+        assert tasks != null : "TaskList cannot be null";
+        assert ui != null : "UI cannot be null";
+        assert storage != null : "Storage cannot be null";
+
         Task task = createTask();
+        assert task != null : "Created task cannot be null";
         tasks.add(task);
         storage.save(tasks);
         ui.showMessage("Got it. I've added this task:\n  " + task
