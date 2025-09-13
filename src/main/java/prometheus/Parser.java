@@ -26,26 +26,28 @@ public class Parser {
      * @throws PrometheusException If the command is empty or invalid
      */
     public static Command parse(String fullCommand) throws PrometheusException {
+        assert fullCommand != null : "Command string cannot be null";
         if (fullCommand.isEmpty()) {
             throw new PrometheusException("prometheus.command.Command cannot be empty!");
         }
 
         String[] parts = fullCommand.split(" ", 2);
         String commandWord = parts[0].toLowerCase();
+        assert !commandWord.isEmpty() : "Command word cannot be empty";
         String arguments = parts.length > 1 ? parts[1] : "";
 
         return switch (commandWord) {
-            case "welcome" -> new WelcomeCommand();
-            case "bye" -> new ExitCommand();
-            case "list" -> new ListCommand();
-            case "mark" -> new MarkCommand(arguments, true);
-            case "unmark" -> new MarkCommand(arguments, false);
-            case "todo" -> new AddCommand("todo", arguments);
-            case "deadline" -> new AddCommand("deadline", arguments);
-            case "event" -> new AddCommand("event", arguments);
-            case "delete" -> new DeleteCommand(arguments);
-            case "find" -> new FindCommand(arguments);
-            default -> throw new PrometheusException("Unknown command: " + commandWord);
+        case "welcome" -> new WelcomeCommand();
+        case "bye" -> new ExitCommand();
+        case "list" -> new ListCommand();
+        case "mark" -> new MarkCommand(arguments, true);
+        case "unmark" -> new MarkCommand(arguments, false);
+        case "todo" -> new AddCommand("todo", arguments);
+        case "deadline" -> new AddCommand("deadline", arguments);
+        case "event" -> new AddCommand("event", arguments);
+        case "delete" -> new DeleteCommand(arguments);
+        case "find" -> new FindCommand(arguments);
+        default -> throw new PrometheusException("Unknown command: " + commandWord);
         };
     }
 }

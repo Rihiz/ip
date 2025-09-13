@@ -34,6 +34,8 @@ public class TaskList {
      * @param task The task to be added
      */
     public void add(Task task) {
+        assert task != null : "Cannot add null task";
+        assert tasks != null : "Task list cannot be null";
         tasks.add(task);
     }
 
@@ -45,6 +47,10 @@ public class TaskList {
      * @throws PrometheusException If the index is out of bounds
      */
     public Task remove(int index) throws PrometheusException {
+        assert index >= 0 : "Index cannot be negative";
+        assert tasks != null : "Task list cannot be null";
+        assert !tasks.isEmpty() : "Cannot remove from empty list";
+
         if (index < 0 || index >= tasks.size()) {
             throw new PrometheusException("Invalid task index!");
         }
@@ -59,12 +65,14 @@ public class TaskList {
      * @throws PrometheusException If the index is out of bounds
      */
     public Task get(int index) throws PrometheusException {
+        assert index >= 0 : "Index cannot be negative";
+        assert tasks != null : "Task list cannot be null";
+        assert !tasks.isEmpty() : "Cannot get from empty list";
         if (index < 0 || index >= tasks.size()) {
             throw new PrometheusException("Invalid task index!");
         }
         return tasks.get(index);
     }
-
     /**
      * Returns the number of tasks in the list.
      *

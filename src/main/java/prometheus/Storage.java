@@ -66,6 +66,8 @@ public class Storage {
      * @throws PrometheusException If there's an error writing to the file
      */
     public void save(TaskList tasks) throws PrometheusException {
+        assert tasks != null : "TaskList cannot be null";
+        assert filePath != null : "File path cannot be null";
         try {
             File directory = new File("./data/");
             if (!directory.exists()) {
@@ -75,6 +77,7 @@ public class Storage {
             try (FileWriter writer = new FileWriter(filePath)) {
                 for (int i = 0; i < tasks.size(); i++) {
                     Task task = tasks.get(i);
+                    assert task != null : "Task at index " + i + " cannot be null";
                     writer.write(task.toFileString() + System.lineSeparator());
                 }
             }
