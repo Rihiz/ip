@@ -7,6 +7,7 @@ import prometheus.command.ExitCommand;
 import prometheus.command.FindCommand;
 import prometheus.command.ListCommand;
 import prometheus.command.MarkCommand;
+import prometheus.command.PriorityCommand;
 import prometheus.command.WelcomeCommand;
 
 /**
@@ -54,6 +55,7 @@ public class Parser {
         case "event" -> new AddCommand("event", arguments);
         case "delete" -> new DeleteCommand(arguments);
         case "find" -> new FindCommand(arguments);
+        case "priority" -> new PriorityCommand( arguments);
         default -> throw new PrometheusException("Unknown command: " + commandWord);
         };
     }

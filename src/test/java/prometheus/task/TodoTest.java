@@ -11,7 +11,7 @@ public class TodoTest {
         todo.markAsDone();
 
         String result = todo.toFileString();
-        assertEquals("T | 1 | read book", result);
+        assertEquals("T | 1 | 1 | read book", result);
     }
 
     @Test
