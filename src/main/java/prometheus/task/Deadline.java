@@ -2,9 +2,6 @@ package prometheus.task;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-
-import prometheus.PrometheusException;
 
 /**
  * Represents a task with a specific deadline.
@@ -12,10 +9,6 @@ import prometheus.PrometheusException;
  * It supports creation from both string and LocalDateTime deadline specifications.
  */
 public class Deadline extends Task {
-    /**
-     * Formatter for parsing date-time input strings in the format "yyyy-MM-dd HHmm".
-     */
-    private static final DateTimeFormatter INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
 
     /**
      * Formatter for displaying date-time in the format "MMM dd yyyy, h:mma".
@@ -36,21 +29,6 @@ public class Deadline extends Task {
     public Deadline(String description, LocalDateTime by) {
         super(description);
         this.by = by;
-    }
-
-    /**
-     * Parses a date-time string into a LocalDateTime object.
-     *
-     * @param dateTimeString The date-time string in the format "yyyy-MM-dd HHmm"
-     * @return The parsed LocalDateTime object
-     * @throws PrometheusException If the date-time string format is invalid
-     */
-    public LocalDateTime parseDateTime(String dateTimeString) throws PrometheusException {
-        try {
-            return LocalDateTime.parse(dateTimeString, INPUT_FORMATTER);
-        } catch (DateTimeParseException e) {
-            throw new PrometheusException("Invalid date format! Please use: yyyy-MM-dd HHmm (e.g., 2019-12-02 1800)");
-        }
     }
 
     /**
