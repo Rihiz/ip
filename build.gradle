@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'checkstyle'
 }
 
 repositories {
@@ -35,6 +36,11 @@ test {
 
 application {
     mainClass.set("prometheus.gui.Launcher");
+}
+
+checkstyle {
+    toolVersion = '11.0.0'
+    configFile = file('config/checkstyle/checkstyle.xml')
 }
 
 shadowJar {

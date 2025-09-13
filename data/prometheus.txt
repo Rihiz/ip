@@ -1,1 +1,2 @@
-T | 0 | hw
+T | 0 | create nuclear bomb
+D | 0 | bomb Hiroshima and Nagasaki | 1945-07-06 1800
