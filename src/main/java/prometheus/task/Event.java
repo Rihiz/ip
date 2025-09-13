@@ -66,9 +66,9 @@ public class Event extends Task {
      */
     @Override
     public String toFileString() {
-        return "E | " + (isDone ? "1" : "0") + " | " + description + " | "
-                + from.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm")) + " | "
-                + to.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm"));
+        return "E | " + (isDone ? "1" : "0") + " | " + priority.ordinal() + " | " + description + " | " +
+                from.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm")) + " | " +
+                to.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm"));
     }
 
     /**
@@ -79,7 +79,8 @@ public class Event extends Task {
      */
     @Override
     public String toString() {
-        return "[E]" + super.toString() + " (from: " + from.format(OUTPUT_FORMATTER)
-                + " to: " + to.format(OUTPUT_FORMATTER) + ")";
+        String baseString = super.toString(); // Gets [X] description #high
+        return baseString + " (from: " + from.format(DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma")) +
+                " to: " + to.format(DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma")) + ")";
     }
 }
