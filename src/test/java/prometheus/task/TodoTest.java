@@ -20,7 +20,7 @@ public class TodoTest {
         todo.markAsDone();
 
         String result = todo.toString();
-        assertEquals("[X] read book", result);
+        assertEquals("[T][X] read book", result);
     }
 
     @Test

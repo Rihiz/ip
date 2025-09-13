@@ -96,7 +96,7 @@ public class AddCommand extends Command {
     private Deadline createDeadline() throws PrometheusException {
         String[] parts = arguments.split("/by", 2);
         boolean isValid = parts.length >= 2 && !parts[0].trim().isEmpty() && !parts[1].trim().isEmpty();
-        if (isValid) {
+        if (!isValid) {
             throw new PrometheusException("Please use format: deadline <description> /by yyyy-MM-dd HHmm");
         }
 
