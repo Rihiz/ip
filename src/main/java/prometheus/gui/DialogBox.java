@@ -24,7 +24,7 @@ public class DialogBox extends HBox {
     @FXML
     private ImageView displayPicture;
 
-    private DialogBox(String text, Image img) {
+    private DialogBox(String text, Image img, boolean isError) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(MainWindow.class.getResource("/view/DialogBox.fxml"));
             fxmlLoader.setController(this);
@@ -39,6 +39,31 @@ public class DialogBox extends HBox {
     }
 
     /**
+     * Creates a dialog box for user messages.
+     */
+    public static DialogBox getUserDialog(String text, Image img) {
+        DialogBox db = new DialogBox(text, img, false);
+        db.dialog.setStyle("-fx-background-color: #e3f2fd; -fx-background-radius: 8;");
+        return db;
+    }
+
+    /**
+     * Creates a dialog box for Prometheus messages.
+     */
+    public static DialogBox getPrometheusDialog(String text, Image img) {
+        boolean isError = text.toLowerCase().contains("error");
+        DialogBox db = new DialogBox(text, img, isError);
+        // Apply different styles for normal messages vs errors
+        if (isError) {
+            db.dialog.setStyle("-fx-background-color: #ffebee; -fx-background-radius: 8; -fx-text-fill: #d32f2f;");
+        } else {
+            db.dialog.setStyle("-fx-background-color: white; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 1, 1, 0, 1);");
+        }
+        db.flip();
+        return db;
+    }
+
+    /**
      * Flips the dialog box such that the ImageView is on the left and text on the right.
      */
     private void flip() {
@@ -46,15 +71,5 @@ public class DialogBox extends HBox {
         Collections.reverse(tmp);
         getChildren().setAll(tmp);
         setAlignment(Pos.TOP_LEFT);
-    }
-
-    public static DialogBox getUserDialog(String text, Image img) {
-        return new DialogBox(text, img);
-    }
-
-    public static DialogBox getPrometheusDialog(String text, Image img) {
-        var db = new DialogBox(text, img);
-        db.flip();
-        return db;
     }
 }

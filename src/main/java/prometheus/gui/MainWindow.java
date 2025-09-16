@@ -5,14 +5,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
 import prometheus.Prometheus;
 
 /**
  * Controller for the main GUI.
  */
-public class MainWindow extends AnchorPane {
+public class MainWindow extends StackPane {
     @FXML
     private ScrollPane scrollPane;
     @FXML
