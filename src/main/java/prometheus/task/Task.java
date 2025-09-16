@@ -123,15 +123,25 @@ public abstract class Task {
      */
     public static Task fromFileString(String fileString) throws PrometheusException {
         String[] parts = fileString.split(" \\| ");
-        if (parts.length < 3) {
+        if (parts.length < 4) {
             throw new PrometheusException("Invalid task format in file: " + fileString);
         }
 
         String typePrefix = parts[0].trim();
         boolean isDone = parts[1].trim().equals("1");
-        String description = parts[2].trim();
+        int priorityValue = Integer.parseInt(parts[2].trim());
+        String description = parts[3].trim();
 
         Task task = createTaskFromPrefix(typePrefix, description, parts);
+
+        // Set priority based on the saved value
+        if (priorityValue == 0) {
+            task.setPriority(Priority.LOW);
+        } else if (priorityValue == 1) {
+            task.setPriority(Priority.MEDIUM);
+        } else if (priorityValue == 2) {
+            task.setPriority(Priority.HIGH);
+        }
 
         if (isDone) {
             task.markAsDone();
