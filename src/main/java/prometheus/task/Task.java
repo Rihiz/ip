@@ -23,6 +23,8 @@ public abstract class Task {
      */
     protected boolean isDone;
 
+    protected Priority priority;
+
     /**
      * Constructs a new Task with the given description.
      * The task is initially marked as not done.
@@ -33,7 +35,16 @@ public abstract class Task {
         assert description != null : "Task description cannot be null";
         assert !description.trim().isEmpty() : "Task description cannot be empty";
         this.description = description;
+        this.priority = Priority.MEDIUM;
         this.isDone = false;
+    }
+
+    public void setPriority(Priority priority) {
+        this.priority = priority;
+    }
+
+    public Priority getPriority() {
+        return this.priority;
     }
 
     /**
@@ -86,7 +97,12 @@ public abstract class Task {
      */
     @Override
     public String toString() {
-        return "[" + getStatusIcon() + "] " + description;
+        String baseString = "[" + getStatusIcon() + "] " + description;
+        // Only show priority if it's not medium (default)
+        if (priority != Priority.MEDIUM) {
+            baseString += " #" + priority.getDisplayName();
+        }
+        return baseString;
     }
 
     /**
