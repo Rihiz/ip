@@ -70,6 +70,7 @@ public class Ui {
     public String readCommand() {
         return scanner.nextLine().trim();
     }
+
     /**
      * Closes the scanner and releases system resources.
      */
