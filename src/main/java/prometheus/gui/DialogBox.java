@@ -57,7 +57,7 @@ public class DialogBox extends HBox {
         if (isError) {
             db.dialog.setStyle("-fx-background-color: #ffebee; -fx-background-radius: 8; -fx-text-fill: #d32f2f;");
         } else {
-            db.dialog.setStyle("-fx-background-color: white; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 1, 1, 0, 1);");
+            db.dialog.setStyle("-fx-background-color: #c8e6c9; -fx-background-radius: 8;");
         }
         db.flip();
         return db;
