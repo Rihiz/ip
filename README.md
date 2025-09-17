@@ -43,5 +43,11 @@ Got it. I've added this task:
 Now you have 1 tasks in the list.
 ```
 
-
-
+Launcher Class
+```Java
+public class Launcher {
+    public static void main(String[] args) {
+        Application.launch(Main.class, args);
+    }
+}
+```
