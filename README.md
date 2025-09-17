@@ -16,7 +16,8 @@
 - easy to learn
 - _SUPER FAST_ 🚀
 
-> 💡 **Pro Tip:** Prometheus works even on low-end machines — no lag!
+> [!TIP]
+> Prometheus works even on low-end machines — no lag!
 
 ## Steps
 1. **Download** [here](https://github.com/Rihiz/ip)
@@ -34,11 +35,13 @@ Here’s how you add a todo task using the CLI:
 ```bash
 todo finish CS2103 assignment
 
-::: 
+```
+Expected outcome
+```
 Got it. I've added this task:
   [T][ ] finish CS2103 assignment
 Now you have 1 tasks in the list.
-:::
+```
 
 
 
