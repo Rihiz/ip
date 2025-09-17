@@ -9,6 +9,7 @@
  |_|   |_|  \___/|_| |_| |_|\___|\__|_| |_|\___|\__,_|___/
                                                                                                        
 ```
+> Prometheus stole fire from the gods
 
 ## Pros
 - text-based
@@ -32,3 +33,12 @@ Here’s how you add a todo task using the CLI:
 
 ```bash
 todo finish CS2103 assignment
+
+::: 
+Got it. I've added this task:
+  [T][ ] finish CS2103 assignment
+Now you have 1 tasks in the list.
+:::
+
+
+
