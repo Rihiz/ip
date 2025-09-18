@@ -61,6 +61,6 @@ public class Deadline extends Task {
     @Override
     public String toString() {
         String baseString = super.toString(); // Gets [X] description #high
-        return baseString + " (by: " + by.format(DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma")) + ")";
+        return "[D]" + baseString + " (by: " + by.format(DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma")) + ")";
     }
 }

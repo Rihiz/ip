@@ -80,7 +80,7 @@ public class Event extends Task {
     @Override
     public String toString() {
         String baseString = super.toString(); // Gets [X] description #high
-        return baseString + " (from: " + from.format(DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma")) +
+        return "[E]" + baseString + " (from: " + from.format(DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma")) +
                 " to: " + to.format(DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma")) + ")";
     }
 }
